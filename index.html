@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WorldShorts</title>
-    <link rel="stylesheet" href="style.css">
+  <!-- Firebase SDKs (Compatibility Version) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
 </head>
 <body>
     <h1>Welcome to WorldShorts</h1>
@@ -16,30 +15,27 @@
         <!-- App content will go here -->
     </div>
 
-    <script>
-        console.log("Starting minimal Firebase setup");
+<script>
+    console.log("Starting Firebase setup with compatibility version");
 
-        // Minimal Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCIZ74FPVXps5XfCldIb42-UBuTbQhOJV0",
-            authDomain: "world-shorts.firebaseapp.com",
-            projectId: "world-shorts",
-            storageBucket: "world-shorts.appspot.com",
-            messagingSenderId: "299276936060",
-            appId: "1:299276936060:web:b33d605263f7f5b5d37af9",
-            measurementId: "G-XZFKCVMPV7"
-        };
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyCIZ74FPVXps5XfCldIb42-UBuTbQhOJV0",
+        authDomain: "world-shorts.firebaseapp.com",
+        projectId: "world-shorts",
+        storageBucket: "world-shorts.appspot.com",
+        messagingSenderId: "299276936060",
+        appId: "1:299276936060:web:b33d605263f7f5b5d37af9",
+        measurementId: "G-XZFKCVMPV7"
+    };
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        console.log("Firebase App initialized:", app.name);
+    // Initialize Firebase with compat version
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
 
-        // Initialize Analytics
-        if (firebase.analytics) {
-            firebase.analytics();
-            console.log("Firebase Analytics initialized");
-        }
-    </script>
+    console.log("Firebase Initialized with compat version", firebase.apps);
+</script>
+
 
     <script src="app.js"></script>
 </body>
