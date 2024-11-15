@@ -1,27 +1,51 @@
-<script>
-    // Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyCIZ74FPVXps5XfCldIb42-UBuTbQhOJV0",
-        authDomain: "world-shorts.firebaseapp.com",
-        projectId: "world-shorts",
-        storageBucket: "world-shorts.appspot.com",
-        messagingSenderId: "299276936060",
-        appId: "1:299276936060:web:b33d605263f7f5b5d37af9",
-        measurementId: "G-XZFKCVMPV7"
-    };
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldShorts</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    firebase.analytics();
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIZ74FPVXps5XfCldIb42-UBuTbQhOJV0",
+            authDomain: "world-shorts.firebaseapp.com",
+            projectId: "world-shorts",
+            storageBucket: "world-shorts.appspot.com",
+            messagingSenderId: "299276936060",
+            appId: "1:299276936060:web:b33d605263f7f5b5d37af9",
+            measurementId: "G-XZFKCVMPV7"
+        };
 
-    // Initialize Firebase services
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    const storage = firebase.storage();
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
 
-    // Test log to confirm Firebase initialization
-    console.log("Firebase Initialized", firebase.apps);
-    console.log("Auth object:", auth);
-    console.log("Firestore object:", db);
-    console.log("Storage object:", storage);
-</script>
+        // Initialize Firebase services
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Test log to confirm Firebase initialization
+        console.log("Firebase Initialized", firebase.apps);
+        console.log("Auth object:", auth);
+        console.log("Firestore object:", db);
+        console.log("Storage object:", storage);
+    </script>
+</head>
+<body>
+    <h1>Welcome to WorldShorts</h1>
+    <div id="app">
+        <!-- App content will go here -->
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
