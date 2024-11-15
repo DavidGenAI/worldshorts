@@ -11,10 +11,9 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
     <script>
-        console.log("Starting Firebase setup");
-
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCIZ74FPVXps5XfCldIb42-UBuTbQhOJV0",
@@ -29,8 +28,6 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         firebase.analytics();
-
-        console.log("Firebase Initialized:", firebase.apps);
     </script>
 </head>
 <body>
