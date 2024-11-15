@@ -45,25 +45,30 @@ function loginUser() {
         });
 }
 
-// Forgot Password function
+// Forgot Password function with added debugging
 function forgotPassword() {
+    console.log("Forgot Password function triggered");
+
     const email = document.getElementById("loginEmail").value;
+    console.log("Email entered for password reset:", email);
 
     if (!email) {
         document.getElementById("authStatus").innerText = "Please enter your email to reset your password.";
+        console.log("No email provided for password reset");
         return;
     }
 
     auth.sendPasswordResetEmail(email)
         .then(() => {
             document.getElementById("authStatus").innerText = "Password reset email sent. Please check your inbox.";
-            console.log("Password reset email sent to:", email);
+            console.log("Password reset email sent successfully to:", email);
         })
         .catch((error) => {
             console.error("Error during password reset:", error);
             document.getElementById("authStatus").innerText = `Error: ${error.message}`;
         });
 }
+
 
 // Upload video to Storage and save metadata (including URL) in Firestore
 function uploadVideo() {
