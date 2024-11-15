@@ -3,51 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WorldShorts</title>
-    <link rel="stylesheet" href="style.css">
-
-    <script>
-        console.log("Test log at the start of index.html");
-    </script>
-    
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
+    <title>Test Console Logs</title>
 </head>
 <body>
+    <h1>Test Page</h1>
     <script>
-        alert("JavaScript is running");
+        console.log("Testing console log output.");
     </script>
-
-        console.log("Beginning Firebase setup");
-
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCIZ74FPVXps5XfCldIb42-UBuTbQhOJV0",
-            authDomain: "world-shorts.firebaseapp.com",
-            projectId: "world-shorts",
-            storageBucket: "world-shorts.appspot.com",
-            messagingSenderId: "299276936060",
-            appId: "1:299276936060:web:b33d605263f7f5b5d37af9",
-            measurementId: "G-XZFKCVMPV7"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        firebase.analytics();
-
-        // Initialize Firebase services
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const storage = firebase.storage();
-
-        console.log("Firebase Initialized");
-    </script>
-
-    <!-- App script -->
-    <script src="app.js"></script>
 </body>
 </html>
