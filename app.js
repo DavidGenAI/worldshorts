@@ -1,6 +1,7 @@
 // Firebase Authentication and Firestore references
 const auth = firebase.auth();
 const db = firebase.firestore();
+const storage = firebase.storage();
 
 // Register a new user
 function registerUser() {
@@ -36,7 +37,7 @@ function loginUser() {
         });
 }
 
-// Upload video metadata only (no actual video upload)
+// Upload video to Storage and save metadata (including URL) in Firestore
 function uploadVideo() {
     const file = document.getElementById("videoFile").files[0];
     if (!file) {
@@ -44,30 +45,50 @@ function uploadVideo() {
         return;
     }
 
-    // Get file details and metadata
+    // Create a unique storage path using user ID and timestamp
     const userId = firebase.auth().currentUser.uid;
-    const metadata = {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        userId: userId,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    };
+    const timestamp = Date.now();
+    const storageRef = storage.ref(`videos/${userId}_${timestamp}_${file.name}`);
 
-    // Save metadata to Firestore
-    db.collection("videos").add(metadata)
-        .then(() => {
-            document.getElementById("uploadStatus").innerText = "Video metadata saved successfully!";
-            console.log("Video metadata saved:", metadata);
-            loadVideos(); // Refresh the video feed after uploading
-        })
-        .catch((error) => {
-            console.error("Error saving metadata to Firestore:", error);
-            document.getElementById("uploadStatus").innerText = `Error saving metadata: ${error.message}`;
-        });
+    // Upload the file to Firebase Storage
+    const uploadTask = storageRef.put(file);
+
+    // Monitor the upload progress
+    uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            document.getElementById("uploadStatus").innerText = `Upload is ${progress.toFixed(2)}% done`;
+        },
+        (error) => {
+            console.error("Upload error:", error);
+            document.getElementById("uploadStatus").innerText = `Upload error: ${error.message}`;
+        },
+        () => {
+            // After upload completes, get the download URL
+            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                // Save metadata with download URL in Firestore
+                db.collection("videos").add({
+                    url: downloadURL,
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    userId: userId,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => {
+                    document.getElementById("uploadStatus").innerText = "Video uploaded successfully!";
+                    loadVideos(); // Refresh the video feed after uploading
+                    console.log("Video metadata saved to Firestore.");
+                }).catch((error) => {
+                    console.error("Error saving metadata to Firestore:", error);
+                    document.getElementById("uploadStatus").innerText = `Error saving metadata: ${error.message}`;
+                });
+            });
+        }
+    );
 }
 
-// Load video metadata from Firestore
+// Load video metadata from Firestore and display videos
 function loadVideos() {
     const videoFeed = document.getElementById("videoFeed");
     videoFeed.innerHTML = "<p>Loading videos...</p>";
@@ -86,6 +107,10 @@ function loadVideos() {
                     <p>Type: ${video.type}</p>
                     <p>Uploaded by: ${video.userId}</p>
                     <p>Uploaded on: ${video.timestamp ? video.timestamp.toDate().toLocaleString() : "N/A"}</p>
+                    <video controls width="300">
+                        <source src="${video.url}" type="${video.type}">
+                        Your browser does not support the video tag.
+                    </video>
                 `;
                 videoFeed.appendChild(videoElement);
             });
