@@ -6,6 +6,10 @@
     <title>WorldShorts</title>
     <link rel="stylesheet" href="style.css">
 
+    <script>
+        console.log("Test log at the start of index.html");
+    </script>
+    
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
@@ -20,6 +24,8 @@
     </div>
 
     <script>
+        console.log("Beginning Firebase setup");
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCIZ74FPVXps5XfCldIb42-UBuTbQhOJV0",
@@ -40,8 +46,7 @@
         const db = firebase.firestore();
         const storage = firebase.storage();
 
-        // Test log to confirm Firebase initialization
-        console.log("Firebase Initialized", firebase.apps);
+        console.log("Firebase Initialized");
     </script>
 
     <!-- App script -->
