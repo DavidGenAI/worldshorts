@@ -1,36 +1,67 @@
-// Load video metadata from Firestore and display videos
-function loadVideos() {
-    const videoFeed = document.getElementById("videoFeed");
-    videoFeed.innerHTML = ""; // Clear existing feed to avoid duplicates
+// Firebase Authentication and Firestore references
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
 
-    // Fetch video metadata from Firestore
-    db.collection("videos").orderBy("timestamp", "desc").get()
-        .then((querySnapshot) => {
-            if (querySnapshot.empty) {
-                videoFeed.innerHTML = "<p>No videos available.</p>";
-                return;
-            }
-            querySnapshot.forEach((doc) => {
-                const video = doc.data();
-                const videoElement = document.createElement("div");
-                videoElement.className = "video-item";
-                videoElement.innerHTML = `
-                    <h3>${video.name}</h3>
-                    <p>Size: ${(video.size / 1024 / 1024).toFixed(2)} MB</p>
-                    <p>Type: ${video.type}</p>
-                    <p>Uploaded by: ${video.userId}</p>
-                    <p>Uploaded on: ${video.timestamp ? video.timestamp.toDate().toLocaleString() : "N/A"}</p>
-                    <video controls width="300">
-                        <source src="${video.url}" type="${video.type}">
-                        Your browser does not support the video tag.
-                    </video>
-                `;
-                videoFeed.appendChild(videoElement);
-            });
+// Register a new user
+function registerUser() {
+    const email = document.getElementById("registerEmail").value;
+    const password = document.getElementById("registerPassword").value;
+
+    auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            const user = userCredential.user;
+            document.getElementById("authStatus").innerText = `Registered successfully with UID: ${user.uid}`;
+            console.log("User registered:", user);
         })
         .catch((error) => {
-            console.error("Error loading videos:", error);
-            videoFeed.innerHTML = `<p>Error loading videos: ${error.message}</p>`;
+            console.error("Error during registration:", error);
+            document.getElementById("authStatus").innerText = `Registration error: ${error.message}`;
+        });
+}
+
+// Login an existing user
+function loginUser() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            const user = userCredential.user;
+            document.getElementById("authStatus").innerText = `Logged in successfully with UID: ${user.uid}`;
+            console.log("User logged in:", user);
+        })
+        .catch((error) => {
+            console.error("Error during login:", error);
+            let errorMessage = "Login error: " + (error.message || "Unknown error occurred");
+            if (error.code === "auth/user-not-found") {
+                errorMessage = "No user found with this email.";
+            } else if (error.code === "auth/wrong-password") {
+                errorMessage = "Incorrect password.";
+            } else if (error.code === "auth/invalid-email") {
+                errorMessage = "Invalid email format.";
+            }
+            document.getElementById("authStatus").innerText = errorMessage;
+        });
+}
+
+// Forgot Password function
+function forgotPassword() {
+    const email = document.getElementById("loginEmail").value;
+
+    if (!email) {
+        document.getElementById("authStatus").innerText = "Please enter your email to reset your password.";
+        return;
+    }
+
+    auth.sendPasswordResetEmail(email)
+        .then(() => {
+            document.getElementById("authStatus").innerText = "Password reset email sent. Please check your inbox.";
+            console.log("Password reset email sent to:", email);
+        })
+        .catch((error) => {
+            console.error("Error during password reset:", error);
+            document.getElementById("authStatus").innerText = `Error: ${error.message}`;
         });
 }
 
@@ -84,3 +115,42 @@ function uploadVideo() {
         }
     );
 }
+
+// Load video metadata from Firestore and display videos
+function loadVideos() {
+    const videoFeed = document.getElementById("videoFeed");
+    videoFeed.innerHTML = ""; // Clear existing feed to avoid duplicates
+
+    // Fetch video metadata from Firestore
+    db.collection("videos").orderBy("timestamp", "desc").get()
+        .then((querySnapshot) => {
+            if (querySnapshot.empty) {
+                videoFeed.innerHTML = "<p>No videos available.</p>";
+                return;
+            }
+            querySnapshot.forEach((doc) => {
+                const video = doc.data();
+                const videoElement = document.createElement("div");
+                videoElement.className = "video-item";
+                videoElement.innerHTML = `
+                    <h3>${video.name}</h3>
+                    <p>Size: ${(video.size / 1024 / 1024).toFixed(2)} MB</p>
+                    <p>Type: ${video.type}</p>
+                    <p>Uploaded by: ${video.userId}</p>
+                    <p>Uploaded on: ${video.timestamp ? video.timestamp.toDate().toLocaleString() : "N/A"}</p>
+                    <video controls width="300">
+                        <source src="${video.url}" type="${video.type}">
+                        Your browser does not support the video tag.
+                    </video>
+                `;
+                videoFeed.appendChild(videoElement);
+            });
+        })
+        .catch((error) => {
+            console.error("Error loading videos:", error);
+            videoFeed.innerHTML = `<p>Error loading videos: ${error.message}</p>`;
+        });
+}
+
+// Load videos when the page loads
+document.addEventListener("DOMContentLoaded", loadVideos);
