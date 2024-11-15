@@ -11,7 +11,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
     <script>
         console.log("Starting Firebase setup");
@@ -49,17 +48,26 @@
         <h2>Login</h2>
         <form id="loginForm">
             <input type="email" id="loginEmail" placeholder="Email" required>
-            <input type="password" id="loginPassword" placeholder="Password" required>
+            <input type="password" id="loginPassword" placeholder="Login" required>
             <button type="button" onclick="loginUser()">Login</button>
         </form>
 
         <!-- Auth Status -->
         <div id="authStatus"></div>
+
+        <!-- Video Upload Form -->
+        <h2>Upload Video Short</h2>
+        <form id="uploadForm">
+            <input type="file" id="videoFile" accept="video/*" required>
+            <button type="button" onclick="uploadVideo()">Upload Video</button>
+        </form>
+        <div id="uploadStatus"></div>
     </div>
 
     <script>
-        // Reference to Firebase Authentication
+        // Reference to Firebase Authentication and Firestore
         const auth = firebase.auth();
+        const db = firebase.firestore();
 
         // Register a new user
         function registerUser() {
@@ -96,6 +104,36 @@
                     // Handle errors here
                     console.error("Error during login:", error);
                     document.getElementById("authStatus").innerText = `Login error: ${error.message}`;
+                });
+        }
+
+        // Upload video metadata only (no actual video upload)
+        function uploadVideo() {
+            const file = document.getElementById("videoFile").files[0];
+            if (!file) {
+                document.getElementById("uploadStatus").innerText = "Please select a video file.";
+                return;
+            }
+
+            // Get file details and metadata
+            const userId = firebase.auth().currentUser.uid;
+            const metadata = {
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                userId: userId,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Save metadata to Firestore
+            db.collection("videos").add(metadata)
+                .then(() => {
+                    document.getElementById("uploadStatus").innerText = "Video metadata saved successfully!";
+                    console.log("Video metadata saved:", metadata);
+                })
+                .catch((error) => {
+                    console.error("Error saving metadata to Firestore:", error);
+                    document.getElementById("uploadStatus").innerText = `Error saving metadata: ${error.message}`;
                 });
         }
     </script>
