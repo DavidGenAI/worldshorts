@@ -33,15 +33,7 @@ function loginUser() {
         })
         .catch((error) => {
             console.error("Error during login:", error);
-            let errorMessage = "Login error: " + (error.message || "Unknown error occurred");
-            if (error.code === "auth/user-not-found") {
-                errorMessage = "No user found with this email.";
-            } else if (error.code === "auth/wrong-password") {
-                errorMessage = "Incorrect password.";
-            } else if (error.code === "auth/invalid-email") {
-                errorMessage = "Invalid email format.";
-            }
-            document.getElementById("authStatus").innerText = errorMessage;
+            document.getElementById("authStatus").innerText = `Login error: ${error.message}`;
         });
 }
 
@@ -73,15 +65,12 @@ function uploadVideo() {
         return;
     }
 
-    // Create a unique storage path using user ID and timestamp
     const userId = firebase.auth().currentUser.uid;
     const timestamp = Date.now();
     const storageRef = storage.ref(`videos/${userId}_${timestamp}_${file.name}`);
 
-    // Upload the file to Firebase Storage
     const uploadTask = storageRef.put(file);
 
-    // Monitor the upload progress
     uploadTask.on(
         "state_changed",
         (snapshot) => {
@@ -93,9 +82,7 @@ function uploadVideo() {
             document.getElementById("uploadStatus").innerText = `Upload error: ${error.message}`;
         },
         () => {
-            // After upload completes, get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                // Save metadata with download URL in Firestore
                 db.collection("videos").add({
                     url: downloadURL,
                     name: file.name,
@@ -105,7 +92,7 @@ function uploadVideo() {
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 }).then(() => {
                     document.getElementById("uploadStatus").innerText = "Video uploaded successfully!";
-                    loadVideos(); // Refresh the video feed after uploading
+                    loadVideos();
                     console.log("Video metadata saved to Firestore.");
                 }).catch((error) => {
                     console.error("Error saving metadata to Firestore:", error);
@@ -119,9 +106,8 @@ function uploadVideo() {
 // Load video metadata from Firestore and display videos
 function loadVideos() {
     const videoFeed = document.getElementById("videoFeed");
-    videoFeed.innerHTML = ""; // Clear existing feed to avoid duplicates
+    videoFeed.innerHTML = "";
 
-    // Fetch video metadata from Firestore
     db.collection("videos").orderBy("timestamp", "desc").get()
         .then((querySnapshot) => {
             if (querySnapshot.empty) {
@@ -134,10 +120,6 @@ function loadVideos() {
                 videoElement.className = "video-item";
                 videoElement.innerHTML = `
                     <h3>${video.name}</h3>
-                    <p>Size: ${(video.size / 1024 / 1024).toFixed(2)} MB</p>
-                    <p>Type: ${video.type}</p>
-                    <p>Uploaded by: ${video.userId}</p>
-                    <p>Uploaded on: ${video.timestamp ? video.timestamp.toDate().toLocaleString() : "N/A"}</p>
                     <video controls width="300">
                         <source src="${video.url}" type="${video.type}">
                         Your browser does not support the video tag.
