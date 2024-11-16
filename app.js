@@ -92,7 +92,7 @@ function uploadVideo() {
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 }).then(() => {
                     document.getElementById("uploadStatus").innerText = "Video uploaded successfully!";
-                    loadVideos();
+                    loadVideos(); // Refresh the video feed after uploading
                     console.log("Video metadata saved to Firestore.");
                 }).catch((error) => {
                     console.error("Error saving metadata to Firestore:", error);
@@ -116,10 +116,21 @@ function loadVideos() {
             }
             querySnapshot.forEach((doc) => {
                 const video = doc.data();
+                
+                // Check if URL is defined to avoid loading undefined URLs
+                if (!video.url) {
+                    console.error("Video URL is missing for document:", doc.id);
+                    return;
+                }
+
                 const videoElement = document.createElement("div");
                 videoElement.className = "video-item";
                 videoElement.innerHTML = `
                     <h3>${video.name}</h3>
+                    <p>Size: ${(video.size / 1024 / 1024).toFixed(2)} MB</p>
+                    <p>Type: ${video.type}</p>
+                    <p>Uploaded by: ${video.userId}</p>
+                    <p>Uploaded on: ${video.timestamp ? video.timestamp.toDate().toLocaleString() : "N/A"}</p>
                     <video controls width="300">
                         <source src="${video.url}" type="${video.type}">
                         Your browser does not support the video tag.
